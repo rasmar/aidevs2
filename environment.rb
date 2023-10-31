@@ -54,3 +54,35 @@ class AIDevsClient
     }
   end
 end
+
+class OpenAI
+  include HTTParty
+  base_uri ENV['OPENAI_API']
+
+  private
+
+  def default_headers
+    {
+      'Content-Type' => 'application/json',
+      'Authorization' => "Bearer #{ENV['OPENAI_API_KEY']}"
+    }
+  end
+end
+
+class ModerationsAPI < OpenAI
+  def check(input)
+    self.class.post(
+      '/v1/moderations',
+      body: payload(input).to_json,
+      headers: default_headers
+    )
+  end
+
+  private
+
+  def payload(input)
+    {
+      'input' => input
+    }
+  end
+end
